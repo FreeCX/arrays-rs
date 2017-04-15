@@ -3,12 +3,24 @@ extern crate arrays;
 use arrays::Array2D;
 
 fn main() {
-    let mut m = Array2D::from(&[
+    // Vec array
+    let vec_data = vec![
+        vec![1, 2, 3, 4, 5, 6],
+        vec![4, 5, 6, 7, 8, 9],
+        vec![7, 8, 9, 1, 2, 3]
+    ];
+    // slice array
+    let slice_data: &[&[u8]] = &[
         &[1, 2, 3],
         &[4, 5, 6],
         &[0, 0, 0]
-    ]);
-    println!("M = {:?}\n", m);
+    ];
+    // you can take data from Vec
+    let s_array = Array2D::from(vec_data);
+    // or slice array
+    let mut m = Array2D::from(slice_data);
+    println!("s_array = {:?}", s_array);
+    println!("M = {:?}", m);
     // IndexMut & Index
     for i in 0..3 {
         m[(2, i)] = m[(0, i)] + m[(1, i)];

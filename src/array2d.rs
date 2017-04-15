@@ -5,12 +5,23 @@ use std::vec;
 use std::slice;
 
 #[derive(Clone)]
+/// Two dimensional array
 pub struct Array2D<T> {
     data: Vec<Vec<T>>,
     dim: (usize, usize)
 }
 
 impl<T> Array2D<T> where T: Default + Clone {
+    /// Initialize dim-sized array of zeros (default value)
+    ///
+    /// # Example
+    /// ```
+    /// use arrays::Array2D;
+    ///
+    /// let a: Array2D<u8> = Array2D::zeros((3, 4));
+    /// println!("a = {:?}", a);
+    /// // a = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    /// ```
     pub fn zeros(dim: (usize, usize)) -> Array2D<T> {
         let (n, m) = dim;
         let mut data = vec![Vec::new(); m];
@@ -19,20 +30,89 @@ impl<T> Array2D<T> where T: Default + Clone {
         }
         Array2D { data: data, dim: dim }
     }
+}
 
-    pub fn from(v: &[&[T]]) -> Array2D<T> {
+impl<T> Array2D<T> {
+    /// Size of Array2D (row, column)
+    /// 
+    /// # Example
+    /// ```
+    /// use arrays::Array2D;
+    ///
+    /// let m: Array2D<u8> = Array2D::zeros((3, 4));
+    /// assert_eq!(m.dim(), (3, 4));
+    /// ```
+    pub fn dim(&self) -> (usize, usize) {
+        self.dim
+    }
+
+    /// Performs the conversion from Array2D to Vec
+    ///
+    /// # Example
+    /// ```
+    /// use arrays::Array2D;
+    ///
+    /// let slice_obj: &[&[_]] = &[
+    ///     &[1, 2, 3],
+    ///     &[4, 5, 6]
+    /// ];
+    /// let vec_obj = vec![
+    ///     vec![1, 2, 3],
+    ///     vec![4, 5, 6]
+    /// ];
+    /// let m = Array2D::from(slice_obj);
+    /// let res = m.to_vec();
+    /// assert_eq!(res, vec_obj);
+    /// ```
+    pub fn to_vec(self) -> Vec<Vec<T>> {
+        self.data
+    }
+}
+
+impl<T> From<Vec<Vec<T>>> for Array2D<T> {
+    /// Performs the conversion from Vec to Array2D
+    ///
+    /// # Example
+    /// ```
+    /// use arrays::Array2D;
+    ///
+    /// let vec_obj = vec![
+    ///     vec![1, 2, 3],
+    ///     vec![4, 5, 6],
+    ///     vec![7, 8, 9]
+    /// ];
+    /// let m = Array2D::from(vec_obj);
+    /// let r = format!("m = {:?}", m);
+    /// assert_eq!(r, "m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]");
+    /// ```
+    fn from(v: Vec<Vec<T>>) -> Self {
+        let dim = (v.len(), v[0].len());
+        Array2D { data: v, dim: dim }
+    }
+}
+
+impl<'a, T: Clone> From<&'a [&'a [T]]> for Array2D<T> {
+    /// Performs the conversion from slice to Array2D
+    ///
+    /// # Example
+    /// ```
+    /// use arrays::Array2D;
+    ///
+    /// let slice_obj: &[&[_]] = &[
+    ///     &[1, 2, 3],
+    ///     &[4, 5, 6]
+    /// ];
+    /// let m = Array2D::from(slice_obj);
+    /// let r = format!("m = {:?}", m);
+    /// assert_eq!(r, "m = [[1, 2, 3], [4, 5, 6]]");
+    /// ```
+    fn from(v: &'a [&'a [T]]) -> Self {
         let dim = (v.len(), v[0].len());
         let mut data = vec![Vec::new(); dim.0];
         for (m, e) in data.iter_mut().zip(v) {
             *m = Vec::from(*e);
         }
         Array2D { data: data, dim: dim }
-    }
-}
-
-impl<T> Array2D<T> {
-    pub fn dim(&self) -> (usize, usize) {
-        self.dim
     }
 }
 
@@ -76,10 +156,12 @@ impl<'a, T> IntoIterator for &'a Array2D<T> {
 
 // TODO: rewrite it
 impl<'a, T> Array2D<T> {
+    /// Returns an iterator over the slice.
     pub fn iter(&'a self) -> slice::Iter<'a, Vec<T>> {
         self.data.iter()
     }
 
+    /// Returns an iterator that allows modifying each value.
     pub fn iter_mut(&'a mut self) -> slice::IterMut<'a, Vec<T>> {
         self.data.iter_mut()
     }

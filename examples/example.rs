@@ -1,15 +1,16 @@
-extern crate matrix;
+extern crate arrays;
 
-use matrix::Matrix;
+use arrays::Array2D;
 
 fn main() {
-    let mut m = Matrix::from(&[
+    let mut m = Array2D::from(&[
         &[1, 2, 3],
         &[4, 5, 6],
-        &[7, 8, 9]
+        &[0, 0, 0]
     ]);
     println!("M = {:?}", m);
-    m[(1, 1)] = 10;
-    println!("M[1, 1] = {}", m[(1, 1)]);
+    for i in 0..3 {
+        m[(2, i)] = m[(0, i)] + m[(1, i)];
+    }
     println!("M = {:?}", m);
 }

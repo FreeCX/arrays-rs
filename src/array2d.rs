@@ -1,6 +1,8 @@
 #[allow(dead_code)]
 use std::ops;
 use std::fmt;
+use std::vec;
+use std::slice;
 
 #[derive(Clone)]
 pub struct Array2D<T> {
@@ -51,5 +53,34 @@ impl<T> ops::IndexMut<(usize, usize)> for Array2D<T> {
 impl<T> fmt::Debug for Array2D<T> where T: fmt::Debug {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self.data)
+    }
+}
+
+impl<T> IntoIterator for Array2D<T> {
+    type Item = Vec<T>;
+    type IntoIter = vec::IntoIter<Vec<T>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.data.into_iter()
+    }
+}
+
+impl<'a, T> IntoIterator for &'a Array2D<T> {
+    type Item = &'a Vec<T>;
+    type IntoIter = slice::Iter<'a, Vec<T>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.data.iter()
+    }
+}
+
+// TODO: rewrite it
+impl<'a, T> Array2D<T> {
+    pub fn iter(&'a self) -> slice::Iter<'a, Vec<T>> {
+        self.data.iter()
+    }
+
+    pub fn iter_mut(&'a mut self) -> slice::IterMut<'a, Vec<T>> {
+        self.data.iter_mut()
     }
 }

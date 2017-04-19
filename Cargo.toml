@@ -1,9 +1,12 @@
 [package]
 name = "arrays"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alexey Golubev <dr.freecx@gmail.com>"]
 
 [[example]]
 name = "example"
+
+[[example]]
+name = "floyd_warshall"
 
 [dependencies]
